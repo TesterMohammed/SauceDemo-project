@@ -195,22 +195,37 @@ def verify_App_Reset():
         bar_menu.click()
         WebDriverWait(driver,10).until(EC.presence_of_element_located((By.ID,"inventory_sidebar_link"))).click()
         WebDriverWait(driver,10).until(EC.presence_of_element_located((By.XPATH,"//div[text()='Products']")))
-        
-
-
-
-
-
-def About_test():
-    try:
+        Add_to_cart_buttons=driver.find_elements(By.XPATH,"//button[text()='ADD TO CART']")
+        Add_to_cart_buttons[0].click()
+        time.sleep(1)
+        Add_to_cart_buttons[1]
+        time.sleep(1)
         bar_menu=driver.find_element(By.CSS_SELECTOR,".bm-burger-button")
         bar_menu.click()
-        WebDriverWait(driver,10).until(EC.presence_of_element_located((By.ID,"about_sidebar_link"))).click()
+        WebDriverWait(driver,10).until(EC.presence_of_element_located((By.ID,"reset_sidebar_link"))).click()
+        panier=driver.find_element(By.CSS_SELECTOR,".fa-layers-counter shopping_cart_badge")
+        assert panier not in driver.page_source,"la fonction App Reset ne fonctionnalité pas correctement"
+        print("La fonctionnalité App Reset fonctionne correctement")
+    except Exception as e:
+        print("l'erreur dans verify_App_Reset",e)
+def About_test():
+    try:
+        driver.find_element(By.ID,"about_sidebar_link").click()
         time.sleep(3)
         assert "The world relies on your code. Test on thousands of different device, browser, and OS configurations–anywhere, any time." in driver.page_source,"il y'a problème dans la page About"
         print("la fonction about est affichée avec les informations necessaires")
     except Exception as e:
-        print("l'erreur dans About_test",e)    
+        print("l'erreur dans About_test",e)  
+def verify_logout():
+    try:
+        login_valid_identity()
+        driver.find_element(By.CSS_SELECTOR,".bm-burger-button").click()
+        WebDriverWait(driver,10).until(EC.presence_of_element_located((By.ID,"logout_sidebar_link"))).click()
+        time.sleep(2)
+        assert "Username" in driver.page_source,"il y'a un problème de deconnection du platforme"
+        print("l'utilisateur se déconnecte avec succès")
+    except Exception as e:
+        print("l'erreur dans verify_logout",e)
 try:
     login_invalidusername_invalidpasword()
     login_validusername_invalidpasword()
@@ -225,10 +240,9 @@ try:
     verify_add_products()
     verify_remove_products()
     verify_making_products_order()
-
-
-
-    About_test()  
+    verify_App_Reset()
+    About_test() 
+    verify_logout() 
 
 finally:
     driver.quit()
