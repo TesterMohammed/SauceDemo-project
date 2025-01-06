@@ -133,8 +133,33 @@ def verify_add_products():
         for button in Add_to_cart_buttons:
             button.click()
             time.sleep(1)
-        
-
+        panier=driver.find_element(By.CSS_SELECTOR,".fa-layers-counter shopping_cart_badge")
+        assert "ADD TO CART" not in driver.page_source and "REMOVE" in driver.page_source and int(panier.text)==len(Add_to_cart_buttons),"il y'a un problème d'ajout des produits"
+        print("Tous les produits sont ajoutés avec succès") 
+    except Exception as e:
+        print("l'erreur dans verify_add_products",e)
+def verify_remove_products():
+    try:
+        Remove_buttons=driver.find_elements(By.XPATH,"//button[text()='REMOVE']")
+        for button in Remove_buttons:
+            button.click()
+            time.sleep(1)
+        panier=driver.find_element(By.CSS_SELECTOR,".fa-layers-counter shopping_cart_badge")
+        assert "REMOVE" not in driver.page_source and "ADD TO CART" in driver.page_source and panier not in driver.page_source,"il y'a un problème de suppression des produits"
+        print("Tous les produits sont supprimés avec succès")
+    except Exception as e:
+        print("l'erreur dans verify_remove_products",e)
+def verify_making_products_order():
+    try:
+       Add_to_cart_buttons=driver.find_elements(By.XPATH,"//button[text()='ADD TO CART']")
+       Add_to_cart_buttons[0].click()
+       time.sleep(1)
+       Add_to_cart_buttons[1]
+       time.sleep(1)
+       panier=driver.find_element(By.CSS_SELECTOR,"svg[data-icon='shopping-cart']")
+       panier.click()
+       if "REMOVE" in driver.page_source:
+           
 
 
 
@@ -162,6 +187,9 @@ try:
     filter_Price_high_to_low()
     verify_products_duplication()
     verify_images_duplication()
+    verify_add_products()
+    verify_remove_products()
+
 
 
     About_test()  
