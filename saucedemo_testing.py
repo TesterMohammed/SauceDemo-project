@@ -9,7 +9,7 @@ driver=webdriver.Chrome()
 def login(username,password):
     try:
         driver.maximize_window()
-        driver.get("https://www.saucedemo.com/v1/")
+        driver.get("https://www.saucedemo.com/")
         username1=WebDriverWait(driver,10).until(EC.presence_of_element_located((By.NAME,"user-name")))
         password1=driver.find_element(By.NAME,"password")
         username1.send_keys(username)
@@ -131,36 +131,36 @@ def verify_images_duplication():
         print("l'erreur dans verify_images_duplication",e)
 def verify_add_products():
     try:
-        Add_to_cart_buttons=driver.find_elements(By.XPATH,"//button[text()='ADD TO CART']")
+        Add_to_cart_buttons=driver.find_elements(By.XPATH,"//button[text()='Add to cart']")
         for button in Add_to_cart_buttons:
             button.click()
             time.sleep(1)
-        panier=driver.find_element(By.CSS_SELECTOR,".fa-layers-counter.shopping_cart_badge")
-        assert "ADD TO CART" not in driver.page_source and "REMOVE" in driver.page_source and int(panier.text)==len(Add_to_cart_buttons),"il y'a un problème d'ajout des produits"
+        panier=driver.find_element(By.CSS_SELECTOR,".shopping_cart_badge")
+        assert "Add to cart" not in driver.page_source and "Remove" in driver.page_source and int(panier.text)==len(Add_to_cart_buttons),"il y'a un problème d'ajout des produits"
         print("Tous les produits sont ajoutés avec succès") 
     except Exception as e:
         print("l'erreur dans verify_add_products",e)
 def verify_remove_products():
     try:
-        Remove_buttons=driver.find_elements(By.XPATH,"//button[text()='REMOVE']")
+        Remove_buttons=driver.find_elements(By.XPATH,"//button[text()='Remove']")
         for button in Remove_buttons:
             button.click()
             time.sleep(1)
-        assert "REMOVE" not in driver.page_source and "ADD TO CART" in driver.page_source and "fa-layers-counter shopping_cart_badge" not in driver.page_source,"il y'a un problème de suppression des produits"
+        assert "Remove" not in driver.page_source and "Add to cart" in driver.page_source and "shopping_cart_badge" not in driver.page_source,"il y'a un problème de suppression des produits"
         print("Tous les produits sont supprimés avec succès")
     except Exception as e:
         print("l'erreur dans verify_remove_products",e)
 def verify_making_products_order():
     try:
-       Add_to_cart_buttons=driver.find_elements(By.XPATH,"//button[text()='ADD TO CART']")
+       Add_to_cart_buttons=driver.find_elements(By.XPATH,"//button[text()='Add to cart']")
        Add_to_cart_buttons[0].click()
        time.sleep(1)
        Add_to_cart_buttons[1].click()
        time.sleep(1)
-       driver.find_element(By.CSS_SELECTOR,"svg[data-icon='shopping-cart']").click()
+       driver.find_element(By.CSS_SELECTOR,".shopping_cart_link").click()
        time.sleep(2)
-       if "REMOVE" in driver.page_source:
-           driver.find_element(By.CSS_SELECTOR,".btn_action.checkout_button").click()
+       if "Remove" in driver.page_source:
+           driver.find_element(By.CSS_SELECTOR,"#checkout").click()
        else:
            print("le panier est vide")
        first_name=WebDriverWait(driver,10).until(EC.presence_of_element_located((By.ID,"first-name")))
@@ -169,7 +169,7 @@ def verify_making_products_order():
        last_name.send_keys("Dhaibia")
        postal_code=driver.find_element(By.ID,"postal-code")
        postal_code.send_keys("3050")
-       driver.find_element(By.CSS_SELECTOR,"input[value='CONTINUE']").click()
+       driver.find_element(By.CSS_SELECTOR,"input[value='Continue']").click()
        #verifier la somme des prix de produits à commander
        prices_produits=WebDriverWait(driver,10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR,".inventory_item_price")))
        prices=[]
@@ -177,33 +177,33 @@ def verify_making_products_order():
           prices.append(float(price.text.split('$')[-1].strip()))
        print("les prices de produits sont",prices)
        item_total=driver.find_element(By.CLASS_NAME,"summary_subtotal_label")
-       assert sum(prices)==float(item_total.text.split('$')[-1].strip()),"la somme des prix des produits n'est pas correctes"
+       print(sum(prices))
+       assert f"{sum(prices):.2f}"==f"{float(item_total.text.split('$')[-1].strip()):.2f}","la somme des prix des produits n'est pas correctes"
        print("la somme des prix de produits est correcte")
        tax=driver.find_element(By.CLASS_NAME,"summary_tax_label")
        Total=driver.find_element(By.CLASS_NAME,"summary_total_label")
        assert f"{float(Total.text.split('$')[-1].strip()):.2f}"==f"{float(item_total.text.split('$')[-1].strip()) + float(tax.text.split('$')[-1].strip()):.2f}","le prix total avec tax n'est pas correcte"
        print("le prix total avec tax est correcte")
-       driver.find_element(By.XPATH,"//a[text()='FINISH']").click() 
+       driver.find_element(By.XPATH,"//button[text()='Finish']").click() 
        time.sleep(2)
-       assert "THANK YOU FOR YOUR ORDER" in driver.page_source,"la commande des produits n'est pas placée correctement"
+       assert "Thank you for your order!" in driver.page_source,"la commande des produits n'est pas placée correctement"
        print("la commande des produits est bien placée")
     except Exception as e:
         print("l'erreur dans verify_making_products_order",e) 
 def verify_App_Reset():
     try:
-        WebDriverWait(driver,10).until(EC.presence_of_element_located((By.CSS_SELECTOR,".bm-burger-button"))).click()
+        driver.find_element(By.ID,"react-burger-menu-btn").click()
         WebDriverWait(driver,10).until(EC.presence_of_element_located((By.ID,"inventory_sidebar_link"))).click()
-        WebDriverWait(driver,10).until(EC.presence_of_element_located((By.XPATH,"//div[text()='Products']")))
-        Add_to_cart_buttons=driver.find_elements(By.XPATH,"//button[text()='ADD TO CART']")
+        WebDriverWait(driver,10).until(EC.presence_of_element_located((By.XPATH,"//span[text()='Products']")))
+        Add_to_cart_buttons=driver.find_elements(By.XPATH,"//button[text()='Add to cart']")
         Add_to_cart_buttons[0].click()
         time.sleep(1)
         Add_to_cart_buttons[1].click()
         time.sleep(2)
-        driver.find_element(By.CSS_SELECTOR,".bm-burger-button").click()
+        driver.find_element(By.ID,"react-burger-menu-btn").click()
+        WebDriverWait(driver,10).until(EC.presence_of_element_located((By.ID,"reset_sidebar_link"))).click()
         time.sleep(2)
-        WebDriverWait(driver,10).until(EC.element_to_be_clickable((By.ID,"reset_sidebar_link"))).click()
-        time.sleep(2)
-        assert "fa-layers-counter shopping_cart_badge" not in driver.page_source,"la fonctionnalité App Reset ne fonctionne pas correctement"
+        assert "shopping_cart_badge" not in driver.page_source,"la fonctionnalité App Reset ne fonctionne pas correctement"
         print("La fonctionnalité App Reset fonctionne correctement")
     except Exception as e:
         print("l'erreur dans verify_App_Reset",e)
@@ -218,8 +218,8 @@ def About_test():
 def verify_logout():
     try:
         login_valid_identity()
-        driver.find_element(By.CSS_SELECTOR,".bm-burger-button").click()
-        WebDriverWait(driver,10).until(EC.presence_of_element_located((By.ID,"logout_sidebar_link"))).click()
+        driver.find_element(By.CSS_SELECTOR,"#react-burger-menu-btn").click()
+        WebDriverWait(driver,10).until(EC.element_to_be_clickable((By.ID,"logout_sidebar_link"))).click()
         time.sleep(2)
         assert "Username" in driver.page_source,"il y'a un problème de deconnection du platforme"
         print("l'utilisateur se déconnecte avec succès")
