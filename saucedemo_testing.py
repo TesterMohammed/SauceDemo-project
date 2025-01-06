@@ -158,9 +158,44 @@ def verify_making_products_order():
        time.sleep(1)
        panier=driver.find_element(By.CSS_SELECTOR,"svg[data-icon='shopping-cart']")
        panier.click()
+       time.sleep(2)
        if "REMOVE" in driver.page_source:
-           
-
+           driver.find_element(By.CSS_SELECTOR,".btn_action checkout_button").click()
+       else:
+           print("le panier est vide")
+       first_name=WebDriverWait(driver,10).until(EC.presence_of_element_located((By.ID,"first-name")))
+       first_name.send_keys("Mohamed")
+       last_name=driver.find_element(By.ID,"last-name")
+       last_name.send_keys("Dhaibia")
+       postal_code=driver.find_element(By.ID,"postal-code")
+       postal_code.send_keys("3050")
+       driver.find_element(By.CSS_SELECTOR,"input[value='CONTINUE']").click()
+       #verifier la somme des prix de produits à commander
+       prices_produits=WebDriverWait(driver,10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR,".inventory_item_price")))
+       prices=[]
+       for price in prices_produits:
+          prices.append(float((price.text)[1:]))
+       print("les prices de produits sont",prices)
+       item_total=driver.find_element(By.CLASS_NAME,"summary_subtotal_label")
+       assert sum(prices)==float((item_total.text)[1:]),"la somme des prix des produits n'est pas correctes"
+       print("la somme des prix de produits est correcte")
+       tax=driver.find_element(By.CLASS_NAME,"summary_tax_label")
+       Total=driver.find_element(By.CLASS_NAME,"summary_total_label")
+       assert float((Total.text)[1:])==float((item_total.text)[1:]) + float((tax.text)[1:]),"le prix total avec tax n'est pas correcte"
+       print("le prix total avec tax est correcte")
+       driver.find_element(By.XPATH,"//a[text()='FINISH']").click() 
+       time.sleep(2)
+       assert "Your order has been dispatched, and will arrive just as fast as the pony can get there!" in driver.page_source,"la commande des produits n'est pas placée correctement"
+       print("la commande des produits est bien placée")
+    except Exception as e:
+        print("l'erreur dans verify_making_products_order",e) 
+def verify_App_Reset():
+    try:
+        bar_menu=driver.find_element(By.CSS_SELECTOR,".bm-burger-button")
+        bar_menu.click()
+        WebDriverWait(driver,10).until(EC.presence_of_element_located((By.ID,"inventory_sidebar_link"))).click()
+        WebDriverWait(driver,10).until(EC.presence_of_element_located((By.XPATH,"//div[text()='Products']")))
+        
 
 
 
@@ -189,6 +224,7 @@ try:
     verify_images_duplication()
     verify_add_products()
     verify_remove_products()
+    verify_making_products_order()
 
 
 
