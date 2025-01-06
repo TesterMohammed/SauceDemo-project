@@ -243,6 +243,5 @@ try:
     verify_App_Reset()
     About_test() 
     verify_logout() 
-
 finally:
     driver.quit()
