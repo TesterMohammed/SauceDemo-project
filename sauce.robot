@@ -105,12 +105,35 @@ verify images duplication
     ${images src}=   Create List
     FOR    ${element}    IN    @{images}
         ${element src}=   Get Element Attribute    ${element}    src
-        Append To List    ${products tis}    ${element text}
+        Append To List    ${images src}    ${element src}
     END
-    Log    ${products titles}
-    ${set products titles}=  Remove Duplicates    ${products titles}
-    Log    ${set products titles}
-    ${products titles length}=  Get Length    ${products titles}
-    ${set products titles length}=  Get Length    ${set products titles}
-    ${status}=   Run Keyword And Return Status    Should Be Equal As Integers   ${products titles length}    ${set products titles length}
-    Run Keyword If    ${status}==True  Log  Products are not duplicated  ELSE  Log   Products are duplicated
+    Log    ${images src}
+    ${set images src}=  Remove Duplicates    ${images src}
+    Log    ${set images src}
+    ${images src length}=  Get Length    ${images src}
+    ${set images src length}=  Get Length    ${set images src}
+    ${status}=   Run Keyword And Return Status    Should Be Equal As Integers    ${images src length}    ${set images src length}
+    Run Keyword If    ${status}==True  Log  images are not duplicated  ELSE  Log   images are duplicated
+verify adding products
+    ${Add to cart buttons}=   Get WebElements    xpath=//button[text()="Add to cart"]
+    FOR    ${element}    IN    @{Add to cart buttons}
+        Click Element    ${element}
+        Sleep    1
+    END
+    ${cart products number}=  Evaluate   int(Get Text    css=.shopping_cart_badge)
+    ${Add to cart buttons length}=  Get Length    ${Add to cart buttons}
+    ${pages source}=   Get Source
+    Should Be Equal    ${Add to cart buttons length}    ${cart products number}
+    Should Not Contain   ${pages source}    Add to cart
+verify deleting products
+    ${Remove buttons}=   Get WebElements    xpath=//button[text()="Remove"]
+    FOR    ${element}    IN    @{Remove buttons}
+        Click Element    ${element}
+        Sleep    1
+    END
+    ${pages source}=   Get Source
+    Should Not Contain   ${pages source}    Remove
+    Should Not Contain   ${pages source}    shopping_cart_badge
+verify making order
+    ${Add to cart buttons}=   Get WebElements    xpath=//button[text()="Add to cart"]
+                   
