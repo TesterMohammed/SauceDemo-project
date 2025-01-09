@@ -61,11 +61,11 @@ verify filter Name (Z to A)
 verify filter Price (low to high)
     Select From List By Label      css=.product_sort_container       Price (low to high)
     Sleep    2
-    ${products pricess}=  Get WebElements    css=.inventory_item_price 
+    ${products elements}=  Get WebElements    css=.inventory_item_price 
     ${products prices}=   Create List
-    FOR    ${element}    IN    @{products pricess}
+    FOR    ${element}    IN    @{products elements}
         ${element text}=   Get Text    ${element}
-        ${product price}=  Evaluate    float(${element text}.split('$')[-1].strip())
+        ${product price}=  Evaluate    float("${element text}".split('$')[-1].strip())
         Append To List    ${products prices}    ${product price}
     END
     Log    ${products prices}
@@ -75,11 +75,11 @@ verify filter Price (low to high)
 verify filter Price (high to low)
     Select From List By Label      css=.product_sort_container       Price (high to low)
     Sleep    2
-    ${products pricess}=  Get WebElements    css=.inventory_item_price 
+    ${products elements}=  Get WebElements    css=.inventory_item_price 
     ${products prices}=   Create List
-    FOR    ${element}    IN    @{products pricess}
+    FOR    ${element}    IN    @{products elements}
         ${element text}=   Get Text    ${element}
-        ${product price}=  Evaluate    float(${element text}.split('$')[-1].strip())
+        ${product price}=  Evaluate    float("${element text}".split('$')[-1].strip())
         Append To List    ${products prices}    ${product price}
     END
     Log    ${products prices}
@@ -120,10 +120,11 @@ verify adding products
         Click Element    ${element}
         Sleep    1
     END
-    ${cart products number}=  Evaluate   int(Get Text    css=.shopping_cart_badge)
+    ${cart products number}=  Get Text    css=.shopping_cart_badge
+    ${cart products number int}=  Evaluate   int(${cart products number})
     ${Add to cart buttons length}=  Get Length    ${Add to cart buttons}
     ${pages source}=   Get Source
-    Should Be Equal    ${Add to cart buttons length}    ${cart products number}
+    Should Be Equal    ${Add to cart buttons length}    ${cart products number int}
     Should Not Contain   ${pages source}    Add to cart
 verify deleting products
     ${Remove buttons}=   Get WebElements    xpath=//button[text()="Remove"]
@@ -136,16 +137,16 @@ verify deleting products
     Should Not Contain   ${pages source}    shopping_cart_badge
 verify making order
     ${Add to cart buttons}=   Get WebElements    xpath=//button[text()="Add to cart"]
-    ${first product}=   Evaluate    ${Add to cart buttons}[0]
+    ${first product}=   Set Variable   ${Add to cart buttons}[0]
     Click Element    ${first product}
     Sleep    1
-    ${second product}=   Evaluate    ${Add to cart buttons}[1]
+    ${second product}=  Set Variable   ${Add to cart buttons}[1]
     Click Element    ${second product}
     Sleep    1
     Click Element    css=.shopping_cart_link
     Page Should Contain     Remove
     Click Button    checkout
-    Wait Until Element Is Visible    first-name
+    Wait Until Element Is Visible    first-name 
     Input Text    first-name    Mohamed
     Input Text    last-name     Dhaibia
     Input Text    postal-code   3050
@@ -155,18 +156,18 @@ verify making order
     ${products prices}=   Create List
     FOR    ${element}    IN    @{products pricess}
         ${element text}=   Get Text    ${element}
-        ${product price}=  Evaluate    f"{float(${element text}.split('$')[-1].strip()):.2f}"
+        ${product price}=  Evaluate    f"{float("${element text}".split('$')[-1].strip()):.2f}"
         Append To List    ${products prices}    ${product price}
     END
-    ${Somme}=  Evaluate   sum(${products prices})
+    ${Somme}=  Evaluate   sum([float(x) for x in ${products prices}])
     Log   la somme des prix de produits dans la cart est = ${Somme}
     ${subtotal text}=    Get Text    css=.summary_subtotal_label
-    ${subtotal price}=   Evaluate    f"{float(${subtotal text}.split('$')[-1].strip()):.2f}"
+    ${subtotal price}=   Evaluate    f"{float("${subtotal text}".split('$')[-1].strip()):.2f}"
     Should Be Equal    ${Somme}    ${subtotal price}
     ${Tax text}=    Get Text    css=.summary_tax_label
-    ${Tax price}=   Evaluate    f"{float(${subtotal text}.split('$')[-1].strip()):.2f}"
+    ${Tax price}=   Evaluate    f"{float("${subtotal text}".split('$')[-1].strip()):.2f}"
     ${Total text}=    Get Text    css=.summary_total_label
-    ${Total price}=   Evaluate    f"{float(${Total text}.split('$')[-1].strip()):.2f}"
+    ${Total price}=   Evaluate    f"{float("${Total text}".split('$')[-1].strip()):.2f}"
     ${somme Tax et subtotal price}=  Evaluate   ${Tax price} + ${subtotal price}
     Should Be Equal    ${Total price}     ${somme Tax et subtotal price}
     Click Button    finish
@@ -176,10 +177,10 @@ verify Reset App
     Click Button    back-to-products
     Wait Until Page Contains    Products
     ${Add to cart buttons}=   Get WebElements    xpath=//button[text()="Add to cart"]
-    ${first product}=   Evaluate    ${Add to cart buttons}[0]
+    ${first product}=   Set Variable  ${Add to cart buttons}[0]
     Click Element    ${first product}
     Sleep    1
-    ${second product}=   Evaluate    ${Add to cart buttons}[1]
+    ${second product}=   Set Variable  ${Add to cart buttons}[1]
     Click Element    ${second product}
     Sleep    1  
     ${cart products number}=   Get Text    css=.shopping_cart_badge
