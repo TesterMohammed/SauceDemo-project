@@ -105,7 +105,7 @@ verify images duplication
     ${images src}=   Create List
     FOR    ${element}    IN    @{images}
         ${element src}=   Get Element Attribute    ${element}    src
-        Append To List    ${products titles}    ${element text}
+        Append To List    ${products tis}    ${element text}
     END
     Log    ${products titles}
     ${set products titles}=  Remove Duplicates    ${products titles}
