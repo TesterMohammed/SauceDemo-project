@@ -4,7 +4,7 @@ Library   Collections
 *** Variables ***
 ${url}       https://www.saucedemo.com/
 ${browser}   Chrome
-${username}   standard_user
+${username}   problem_user
 ${password}   secret_sauce
 *** Keywords ***
 login
@@ -112,8 +112,7 @@ verify images duplication
     Log    ${set images src}
     ${images src length}=  Get Length    ${images src}
     ${set images src length}=  Get Length    ${set images src}
-    ${status}=   Run Keyword And Return Status    Should Be Equal As Integers    ${images src length}    ${set images src length}
-    Run Keyword If    ${status}==True  Log  images are not duplicated  ELSE  Log   images are duplicated
+    Should Be Equal    ${images src length}    ${set images src length}
 verify adding products
     ${Add to cart buttons}=   Get WebElements    xpath=//button[text()="Add to cart"]
     FOR    ${element}    IN    @{Add to cart buttons}
@@ -156,25 +155,28 @@ verify making order
     ${products prices}=   Create List
     FOR    ${element}    IN    @{products pricess}
         ${element text}=   Get Text    ${element}
-        ${product price}=  Evaluate    f"{float("${element text}".split('$')[-1].strip()):.2f}"
+        ${product price}=  Evaluate    float("${element text}".split('$')[-1].strip())
         Append To List    ${products prices}    ${product price}
     END
-    ${Somme}=  Evaluate   sum([float(x) for x in ${products prices}])
-    Log   la somme des prix de produits dans la cart est = ${Somme}
+    ${Somme}=  Evaluate   sum(${products prices})
+    Log   la somme des prix de produits dans la cart est=${Somme}
     ${subtotal text}=    Get Text    css=.summary_subtotal_label
-    ${subtotal price}=   Evaluate    f"{float("${subtotal text}".split('$')[-1].strip()):.2f}"
+    ${subtotal price}=   Evaluate    float("${subtotal text}".split('$')[-1].strip())
+    Log   subtotal price = ${subtotal price}
     Should Be Equal    ${Somme}    ${subtotal price}
     ${Tax text}=    Get Text    css=.summary_tax_label
-    ${Tax price}=   Evaluate    f"{float("${subtotal text}".split('$')[-1].strip()):.2f}"
+    ${Tax price}=   Evaluate    float("${Tax text}".split('$')[-1].strip())
+    Log   tax price = ${Tax price}
     ${Total text}=    Get Text    css=.summary_total_label
-    ${Total price}=   Evaluate    f"{float("${Total text}".split('$')[-1].strip()):.2f}"
-    ${somme Tax et subtotal price}=  Evaluate   ${Tax price} + ${subtotal price}
+    ${Total price}=   Evaluate    float("${Total text}".split('$')[-1].strip())
+    ${somme Tax et subtotal price}=  Evaluate   float(f"{${Tax price} + ${subtotal price}:.2f}")
     Should Be Equal    ${Total price}     ${somme Tax et subtotal price}
     Click Button    finish
     Sleep    2
     Page Should Contain    Thank you for your order!
+    [Teardown]   Close Browser
 verify Reset App
-    Click Button    back-to-products
+    login    ${username}    ${password}
     Wait Until Page Contains    Products
     ${Add to cart buttons}=   Get WebElements    xpath=//button[text()="Add to cart"]
     ${first product}=   Set Variable  ${Add to cart buttons}[0]
@@ -196,6 +198,7 @@ verify About feature
     Wait Until Element Is Visible    css=.MuiTypography-root.MuiTypography-body1.css-1mz1i0z
     ${about text}=  Get Text    css=.MuiTypography-root.MuiTypography-body1.css-1mz1i0z
     log  ${about text}
+    [Teardown]  Close Browser
 verify logout feature
     login    ${username}    ${password}
     Page Should Contain    Products
@@ -203,7 +206,7 @@ verify logout feature
     Wait Until Element Is Visible    logout_sidebar_link
     Click Element    logout_sidebar_link
     Sleep    2
-    Page Should Contain    Login
+    Page Should Contain Element    css=.submit-button.btn_action
     [Teardown]   Close Browser
 
 
