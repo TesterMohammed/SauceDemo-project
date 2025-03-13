@@ -1,20 +1,23 @@
-# Tests Automatisés SauceDemo  
+# 🏆 SauceDemo Automated Tests  
 
-Ce projet contient des scripts de test automatisés pour la plateforme e-commerce **SauceDemo**, en utilisant **Selenium WebDriver** et **Robot Framework**.  
+This project contains automated test scripts for the **SauceDemo** e-commerce platform, using **Selenium WebDriver** and **Robot Framework**.  
 
-## 🛠 Technologies utilisées  
+## 🛠 Technologies Used  
 - Robot Framework  
 - Selenium WebDriver  
 - Python  
 
-## 📌 Cas de test implémentés  
-✅ Connexion avec des identifiants valides/invalides.            
-✅ Test des filtres de recherche de produits.          
-✅ Vérification de la duplication des produits et de leurs images.          
-✅ Ajout/suppression de produits dans le panier.             
-✅ Finalisation du processus de commande.          
-✅ Vérification de la fonctionnalité de réinitialisation de l'application "App reset".          
-✅ Vérification de la section "About".          
-✅ Vérification de la déconnexion de la plateforme.           
+## 📌 Implemented Test Cases  
+✅ Login with valid/invalid credentials.  
+✅ Testing product search filters.  
+✅ Verification of products duplication and their images.  
+✅ Adding/removing products from the cart.  
+✅ Completing the checkout process.  
+✅ Verification of the "App reset" functionality.  
+✅ Verification of the "About" section.  
+✅ Verification of platform logout.  
 
-Pour toute question, n’hésitez pas à me contacter à mohamed.dhaibia@gmail.com
+For any inquiries, feel free to contact me at :            
+E-mail: mohamed.dhaibia@gmail.com            
+Phone: (+216 53498226)
+
