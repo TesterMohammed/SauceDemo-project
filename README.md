@@ -8,7 +8,7 @@ Ce projet contient des scripts de test automatisés pour la plateforme e-commerc
 - Python  
 
 ## 📌 Cas de test implémentés  
-✅ Connexion avec des identifiants valides/invalides.
+✅ Connexion avec des identifiants valides/invalides.            
 ✅ Test des filtres de recherche de produits.
 ✅ Verification de duplication des produits et ses images.
 ✅ Ajout/suppression de produits dans le panier.  
@@ -18,10 +18,3 @@ Ce projet contient des scripts de test automatisés pour la plateforme e-commerc
 ✅ Verification de la déconnection du platforme.
 
 Pour toute question, n’hésitez pas à me contacter à mohamed.dhaibia@gmail.com
-
-
-
-
-
-
-
